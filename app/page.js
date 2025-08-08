@@ -18,10 +18,12 @@ export default function Home() {
   const fetchMonitors = async () => {
     try {
       const response = await fetch('/api/monitors');
+      if (!response.ok) throw new Error(`Failed: ${response.status}`);
       const data = await response.json();
-      setMonitors(data);
+      setMonitors(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch monitors:', error);
+      setMonitors([]);
     } finally {
       setLoading(false);
     }
