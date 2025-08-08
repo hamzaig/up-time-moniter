@@ -7,9 +7,7 @@ export async function GET(request, { params }) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit')) || 50;
     
-    const checks = StatusCheckModel.getByMonitorId(id)
-      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-      .slice(0, limit);
+    const checks = (await StatusCheckModel.getByMonitorId(id)).slice(0, limit);
 
     return NextResponse.json(checks);
   } catch (error) {

@@ -5,7 +5,7 @@ import { monitoringService } from '@/lib/monitor-service';
 export async function GET(request, { params }) {
   try {
     const { id } = await params;
-    const monitor = MonitorModel.getById(id);
+    const monitor = await MonitorModel.getById(id);
     
     if (!monitor) {
       return NextResponse.json(
@@ -14,10 +14,8 @@ export async function GET(request, { params }) {
       );
     }
 
-    const monitorWithStatus = {
-      ...monitor,
-      ...monitoringService.getMonitorStatus(id),
-    };
+    const status = await monitoringService.getMonitorStatus(id);
+    const monitorWithStatus = { ...monitor, ...status };
 
     return NextResponse.json(monitorWithStatus);
   } catch (error) {
@@ -33,7 +31,7 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const body = await request.json();
     
-    const existingMonitor = MonitorModel.getById(id);
+    const existingMonitor = await MonitorModel.getById(id);
     if (!existingMonitor) {
       return NextResponse.json(
         { error: 'Monitor not found' },
@@ -50,11 +48,11 @@ export async function PUT(request, { params }) {
     };
     
     // Update the monitor
-    const updatedMonitor = MonitorModel.update(id, updateData);
+    const updatedMonitor = await MonitorModel.update(id, updateData);
     
     // Restart monitoring with new settings
     if (updatedMonitor.isActive) {
-      monitoringService.restartMonitoring(id);
+      await monitoringService.restartMonitoring(id);
     } else {
       monitoringService.stopMonitoring(id);
     }
@@ -71,7 +69,7 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   try {
     const { id } = await params;
-    const monitor = MonitorModel.getById(id);
+    const monitor = await MonitorModel.getById(id);
     if (!monitor) {
       return NextResponse.json(
         { error: 'Monitor not found' },
@@ -81,7 +79,7 @@ export async function DELETE(request, { params }) {
 
     // Stop monitoring and delete
     monitoringService.stopMonitoring(id);
-    MonitorModel.delete(id);
+    await MonitorModel.delete(id);
 
     return NextResponse.json(
       { message: 'Monitor deleted successfully' },

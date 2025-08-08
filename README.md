@@ -86,6 +86,26 @@ A modern, real-time website uptime monitoring tool built with Next.js, featuring
 
 ## 🔧 Configuration
 
+### MongoDB
+
+This app stores monitors and status checks in MongoDB.
+
+Create a `.env.local` in the project root with:
+
+```
+MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority
+MONGODB_DB=uptime_monitor
+```
+
+Install dependencies and run the dev server:
+
+```
+npm install
+npm run dev
+```
+
+The default Google/GitHub sample monitors have been removed. Add your own monitors via the UI.
+
 ### Monitor Settings
 
 | Setting | Description | Default |

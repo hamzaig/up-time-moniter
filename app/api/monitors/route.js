@@ -4,7 +4,7 @@ import { monitoringService } from '@/lib/monitor-service';
 
 export async function GET() {
   try {
-    const monitors = monitoringService.getAllMonitorStatuses();
+    const monitors = await monitoringService.getAllMonitorStatuses();
     return NextResponse.json(monitors);
   } catch (error) {
     return NextResponse.json(
@@ -27,7 +27,7 @@ export async function POST(request) {
     }
 
     // Create the monitor
-    const newMonitor = MonitorModel.create({
+    const newMonitor = await MonitorModel.create({
       name: body.name,
       url: body.url,
       interval: Math.max(parseInt(body.interval) || 60, 1),
